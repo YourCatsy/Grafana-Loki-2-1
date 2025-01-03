@@ -1,0 +1,47 @@
+version: '3.9'
+
+services:
+  webapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:3000"
+    labels:
+      - "webapp=varlogs"
+    environment:
+      - PORT=3000
+      - LOG_PATH=/var/log/webapp.log
+    volumes:
+      - webapp-logs:/var/log
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "9090:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./provisioning:/etc/grafana/provisioning
+    depends_on:
+      - loki
+
+  loki:
+    image: grafana/loki:2.9.0
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - loki-data:/loki
+
+  promtail:
+    image: grafana/promtail:2.9.0
+    volumes:
+      - ./promtail-config.yaml:/etc/promtail/config.yaml
+      - webapp-logs:/var/log  # Используем общий том
+    command: -config.file=/etc/promtail/config.yaml
+    depends_on:
+      - loki
+
+volumes:
+  webapp-logs:
+  loki-data:
