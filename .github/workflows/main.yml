@@ -36,10 +36,13 @@ jobs:
         docker ps -a
 
     - name: Check logs from Loki
-      run: |
-        docker logs grafana-loki-2-1-loki-1 || echo "No logs from Loki"
-        docker logs grafana-loki-2-1-promtail-1 || echo "No logs from Promtail"
-        docker logs grafana-loki-2-1-grafana-1 || echo "No logs from Grafana"
+      run: docker logs grafana-loki-2-1-loki-1 || echo "No logs from Loki"
+
+    - name: Check logs from promtail
+      run: docker logs grafana-loki-2-1-promtail-1 || echo "No logs from Promtail"
+
+    - name: Check logs from grafana
+      run: docker logs grafana-loki-2-1-grafana-1 || echo "No logs from Grafana"
 
     - name: Test containers functionality
       uses: cypress-io/github-action@v6
