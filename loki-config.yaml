@@ -9,10 +9,13 @@ ingester:
       kvstore:
         store: inmemory
       replication_factor: 1
-  chunk_idle_period: 5m
-  max_chunk_age: 1h
+  chunk_idle_period: 1m
+  max_chunk_age: 30m
   chunk_target_size: 1536000
-  chunk_retain_period: 30s
+  chunk_retain_period: 15s
+  flush_deadline: 1m
+  batch_wait: 1s
+  batch_size: 102400  
 
 schema_config:
   configs:

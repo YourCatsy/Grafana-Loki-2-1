@@ -16,6 +16,8 @@ jobs:
     - uses: actions/checkout@v4
     - name: Build and start containers for a services
       run: docker compose up -d
+    - name: Wait for services to start
+      run: sleep 15
     - name: Test containers functionality
       uses: cypress-io/github-action@v6
       env:
