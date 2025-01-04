@@ -26,15 +26,13 @@ jobs:
 
     - name: Create positions file
       run: |
-        touch /tmp/positions.yaml
-        chmod 666 /tmp/positions.yaml
-        echo "Created positions file at /tmp/positions.yaml"
+        chmod 666 /etc/promtail/config.yaml
+        echo "Created positions file at /etc/promtail/config.yaml"
 
     - name: Create test log file
       run: |
-        echo "Test log entry with Label browser" >> /tmp/webapp.log
         echo "File contents:"
-        cat /tmp/webapp.log || echo "/tmp/webapp.log not found"
+        cat /var/log/webapp.log || echo "/var/log/webapp.log not found"
 
     - name: Update and restart containers
       run: |
@@ -62,12 +60,12 @@ jobs:
 
     - name: Check Promtail positions file
       run: |
-        cat /tmp/positions.yaml || echo "/tmp/positions.yaml not found"
+        cat/etc/promtail/config.yaml || echo "/etc/promtail/config.yamll not found"
 
     - name: List log files in /tmp
       run: |
         ls -la /tmp
-        cat /tmp/webapp.log || echo "/tmp/webapp.log not found"
+        cat /var/log/webapp.log || echo "/var/log/webapp.log not found"
 
     - name: Test containers functionality
       uses: cypress-io/github-action@v6
