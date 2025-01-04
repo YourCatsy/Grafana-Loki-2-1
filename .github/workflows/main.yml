@@ -26,8 +26,13 @@ jobs:
 
     - name: Create test log file
       run: |
-        mkdir -p /var/log
-        echo "Test log entry" >> /var/log/webapp.log
+        mkdir -p /tmp
+        echo "Test log entry" >> /tmp/webapp.log
+
+    - name: Check Promtail positions file
+      run: |
+        ls -la /tmp
+        cat /tmp/webapp.log || echo "/tmp/webapp.log not found"
 
     - name: Restart Promtail to detect logs
       run: |
@@ -57,10 +62,6 @@ jobs:
     - name: Check logs from Grafana
       run: docker logs $(docker ps -qf "name=grafana") || echo "No logs from Grafana"
 
-    - name: List log files in /tmp
-      run: |
-        ls -la /tmp
-        cat /var/log/webapp.log || echo "/var/log/webapp.log not found"
 
     - name: Test containers functionality
       uses: cypress-io/github-action@v6
