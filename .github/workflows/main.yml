@@ -14,10 +14,25 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Build and start containers for a services
+
+    - name: Build and start containers for services
       run: docker compose up -d
+
     - name: Wait for services to start
       run: sleep 300
+
+    - name: Collect Loki logs
+      run: docker logs loki || echo "No logs from Loki"
+
+    - name: Collect Promtail logs
+      run: docker logs promtail || echo "No logs from Promtail"
+
+    - name: Collect Grafana logs
+      run: docker logs grafana || echo "No logs from Grafana"
+
+    - name: Collect webapp logs
+      run: cat /var/log/webapp.log || echo "No logs from webapp.log"
+
     - name: Test containers functionality
       uses: cypress-io/github-action@v6
       env:
@@ -25,3 +40,4 @@ jobs:
         CYPRESS_GRAFANA_URL: http://localhost:9090
       with:
         working-directory: ./.github/tests
+
