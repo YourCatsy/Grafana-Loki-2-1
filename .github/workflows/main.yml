@@ -14,7 +14,9 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Check docker-compose.yml
-      run: ls -la
+      run: |
+        ls -la
+        cat docker-compose.yml || echo "docker-compose.yml not found"
 
     - name: Build and start containers
       run: docker compose up -d
@@ -23,7 +25,10 @@ jobs:
       run: docker ps -a
 
     - name: Create test log file
-      run: echo "Test log entry" >> /tmp/webapp.log
+      run: |
+        echo "Test log entry with Label browser" >> /tmp/webapp.log
+        echo "File contents:"
+        cat /tmp/webapp.log || echo "/tmp/webapp.log not found"
 
     - name: Update and restart containers
       run: |
@@ -44,6 +49,20 @@ jobs:
     - name: Check logs from grafana
       run: docker logs grafana-loki-2-1-grafana-1 || echo "No logs from Grafana"
 
+    - name: Query Loki for logs
+      run: |
+        curl -G 'http://localhost:3100/loki/api/v1/query' \
+          --data-urlencode 'query={job="webapp"}' || echo "Loki query failed"
+
+    - name: Check Promtail positions file
+      run: |
+        cat /var/log/positions.yaml || echo "/var/log/positions.yaml not found"
+
+    - name: List log files in /tmp
+      run: |
+        ls -la /tmp
+        cat /tmp/webapp.log || echo "/tmp/webapp.log not found"
+
     - name: Test containers functionality
       uses: cypress-io/github-action@v6
       env:
@@ -51,3 +70,4 @@ jobs:
         CYPRESS_GRAFANA_URL: http://localhost:9090
       with:
         working-directory: ./.github/tests
+
