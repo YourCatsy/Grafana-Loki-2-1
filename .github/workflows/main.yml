@@ -24,45 +24,38 @@ jobs:
     - name: Check running containers
       run: docker ps -a
 
-    - name: Create positions file
-      run:  /tmp/positions.yaml
-      
-    - name: Check Promtail positions file
-      run: |
-        cat /tmp/positions.yaml || echo "/tmp/positions.yaml not found"
-
     - name: Create test log file
       run: |
-        echo "File contents:"
-        cat /var/log/webapp.log || echo "/var/log/webapp.log not found"
+        mkdir -p /var/log
+        echo "Test log entry" >> /var/log/webapp.log
 
-    - name: Update and restart containers
+    - name: Restart Promtail to detect logs
       run: |
-        docker compose down
-        docker compose up -d
+        docker compose restart promtail
 
     - name: Wait for containers to start
       run: |
         sleep 10
         docker ps -a
 
-    - name: Check logs from Loki
-      run: docker logs grafana-loki-2-1-loki-1 || echo "No logs from Loki"
-
-    - name: Check logs from promtail
-      run: docker logs grafana-loki-2-1-promtail-1 || echo "No logs from Promtail"
-
-    - name: Check logs from grafana
-      run: docker logs grafana-loki-2-1-grafana-1 || echo "No logs from Grafana"
+    - name: Check Promtail configuration
+      run: |
+        ls -la /etc/promtail/config.yaml || echo "Config file not found"
+        cat ./promtail-config.yaml || echo "promtail-config.yaml not found"
 
     - name: Query Loki for logs
       run: |
         curl -G 'http://localhost:3100/loki/api/v1/query' \
           --data-urlencode 'query={job="webapp"}' || echo "Loki query failed"
 
-    - name: Check Promtail positions file
-      run: |
-        cat /etc/promtail/config.yaml || echo "/etc/promtail/config.yamll not found"
+    - name: Check logs from Loki
+      run: docker logs $(docker ps -qf "name=loki") || echo "No logs from Loki"
+
+    - name: Check logs from Promtail
+      run: docker logs $(docker ps -qf "name=promtail") || echo "No logs from Promtail"
+
+    - name: Check logs from Grafana
+      run: docker logs $(docker ps -qf "name=grafana") || echo "No logs from Grafana"
 
     - name: List log files in /tmp
       run: |
@@ -76,4 +69,5 @@ jobs:
         CYPRESS_GRAFANA_URL: http://localhost:9090
       with:
         working-directory: ./.github/tests
+
 
