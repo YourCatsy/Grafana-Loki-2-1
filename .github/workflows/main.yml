@@ -25,9 +25,11 @@ jobs:
       run: docker ps -a
 
     - name: Create positions file
+      run:  /tmp/positions.yaml
+      
+    - name: Check Promtail positions file
       run: |
-        chmod 666 /etc/promtail/config.yaml
-        echo "Created positions file at /etc/promtail/config.yaml"
+        cat /tmp/positions.yaml || echo "/tmp/positions.yaml not found"
 
     - name: Create test log file
       run: |
@@ -60,7 +62,7 @@ jobs:
 
     - name: Check Promtail positions file
       run: |
-        cat/etc/promtail/config.yaml || echo "/etc/promtail/config.yamll not found"
+        cat /etc/promtail/config.yaml || echo "/etc/promtail/config.yamll not found"
 
     - name: List log files in /tmp
       run: |
