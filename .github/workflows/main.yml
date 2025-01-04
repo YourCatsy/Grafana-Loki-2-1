@@ -26,7 +26,13 @@ jobs:
       run: sleep 300
 
     - name: Create test log file
-      run: echo "Test log entry" >> /var/log/webapp.log
+      run: echo "Test log entry" >> /tmp/webapp.log
+
+    - name: Update and restart containers
+      run: |
+        docker compose down
+        docker compose up -d
+
 
     - name: Collect Loki logs
       run: docker logs loki || echo "No logs from Loki"
