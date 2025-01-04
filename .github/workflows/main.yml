@@ -22,9 +22,6 @@ jobs:
     - name: Check running containers
       run: docker ps -a
 
-    - name: Wait for services to start
-      run: sleep 300
-
     - name: Create test log file
       run: echo "Test log entry" >> /tmp/webapp.log
 
@@ -33,15 +30,16 @@ jobs:
         docker compose down
         docker compose up -d
 
+    - name: Wait for containers to start
+      run: |
+        sleep 10
+        docker ps -a
 
-    - name: Collect Loki logs
-      run: docker logs loki || echo "No logs from Loki"
-
-    - name: Collect Promtail logs
-      run: docker logs promtail || echo "No logs from Promtail"
-
-    - name: Collect Grafana logs
-      run: docker logs grafana || echo "No logs from Grafana"
+    - name: Check logs from Loki
+      run: |
+        docker logs grafana-loki-2-1-loki-1 || echo "No logs from Loki"
+        docker logs grafana-loki-2-1-promtail-1 || echo "No logs from Promtail"
+        docker logs grafana-loki-2-1-grafana-1 || echo "No logs from Grafana"
 
     - name: Test containers functionality
       uses: cypress-io/github-action@v6
