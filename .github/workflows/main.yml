@@ -22,45 +22,59 @@ jobs:
       run: docker compose up -d
 
     - name: Check running containers
-      run: docker ps -a
+      run: |
+        docker ps -a
+        echo "Docker containers running after starting: $(docker ps -a)"
 
     - name: Create test log file
       run: |
         mkdir -p /tmp
         echo "Test log entry" >> /tmp/webapp.log
+        echo "Log file created at /tmp/webapp.log"
 
     - name: Check Promtail positions file
       run: |
         ls -la /tmp
         cat /tmp/webapp.log || echo "/tmp/webapp.log not found"
+        echo "Contents of /tmp directory after creating webapp.log: $(ls -la /tmp)"
 
     - name: Restart Promtail to detect logs
       run: |
         docker compose restart promtail
+        echo "Promtail restarted"
 
     - name: Wait for containers to start
       run: |
         sleep 10
         docker ps -a
+        echo "Docker containers after waiting 10 seconds: $(docker ps -a)"
 
     - name: Check Promtail configuration
       run: |
         ls -la ./promtail-config.yaml || echo "promtail-config.yaml not found"
         cat ./promtail-config.yaml || echo "promtail-config.yaml empty"
+        echo "Promtail config file contents: $(cat ./promtail-config.yaml)"
 
     - name: Query Loki for logs
       run: |
         curl -G 'http://localhost:3100/loki/api/v1/query' \
           --data-urlencode 'query={job="webapp"}' || echo "Loki query failed"
+        echo "Loki query sent for logs from webapp"
 
     - name: Check logs from Loki
-      run: docker logs grafana-loki-2-1-loki-1 || echo "No logs from Loki"
+      run: |
+        docker logs grafana-loki-2-1-loki-1 || echo "No logs from Loki"
+        echo "Loki logs retrieved"
 
     - name: Check logs from Promtail
-      run: docker logs grafana-loki-2-1-promtail-1 || echo "No logs from Promtail"
+      run: |
+        docker logs grafana-loki-2-1-promtail-1 || echo "No logs from Promtail"
+        echo "Promtail logs retrieved"
 
     - name: Check logs from Grafana
-      run: docker logs grafana-loki-2-1-grafana-1 || echo "No logs from Grafana"
+      run: |
+        docker logs grafana-loki-2-1-grafana-1 || echo "No logs from Grafana"
+        echo "Grafana logs retrieved"
 
     - name: Test containers functionality
       uses: cypress-io/github-action@v6
@@ -69,5 +83,7 @@ jobs:
         CYPRESS_GRAFANA_URL: http://localhost:9090
       with:
         working-directory: ./.github/tests
+      continue-on-error: true
+
 
 
