@@ -56,7 +56,7 @@ jobs:
 
     - name: Check Promtail positions file
       run: |
-        cat /var/log/positions.yaml || echo "/var/log/positions.yaml not found"
+        cat /tmp/positions.yaml || echo "/tmp/positions.yaml not found"
 
     - name: List log files in /tmp
       run: |
