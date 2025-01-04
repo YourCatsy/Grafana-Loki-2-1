@@ -39,7 +39,7 @@ services:
     image: grafana/promtail:2.9.0
     volumes:
       - ./promtail-config.yaml:/etc/promtail/config.yaml
-      - webapp-logs:/var/log
+      - webapp-logs:/tmp
     command: -config.file=/etc/promtail/config.yaml
     depends_on:
       - loki
