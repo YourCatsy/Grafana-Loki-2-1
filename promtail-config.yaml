@@ -17,5 +17,6 @@ scrape_configs:
         labels:
           job: webapp
           webapp: varlogs
-          __path__: /var/log/webapp.log
+          __path__: /tmp/webapp.log
+
 
