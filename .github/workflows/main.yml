@@ -45,7 +45,7 @@ jobs:
 
     - name: Check Promtail configuration
       run: |
-        ls -la /etc/promtail/config.yaml || echo "Config file not found"
+        ls -la ./promtail-config.yaml || echo "promtail-config.yaml not found"
         cat ./promtail-config.yaml || echo "promtail-config.yaml not found"
 
     - name: Query Loki for logs
