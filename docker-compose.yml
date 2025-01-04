@@ -41,8 +41,6 @@ services:
       - ./promtail-config.yaml:/etc/promtail/config.yaml
       - webapp-logs:/var/log
     command: -config.file=/etc/promtail/config.yaml
-    volumes:
-      - /tmp:/tmp
     depends_on:
       - loki
 
