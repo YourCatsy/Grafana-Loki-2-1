@@ -9,7 +9,7 @@ services:
       - "webapp=varlogs"
     environment:
       - PORT=3000
-      - LOG_PATH=/var/log/webapp.log
+      - LOG_PATH=/tmp/webapp.log
     volumes:
       - webapp-logs:/var/log
 
