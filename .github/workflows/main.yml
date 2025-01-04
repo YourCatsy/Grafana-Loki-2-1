@@ -24,6 +24,12 @@ jobs:
     - name: Check running containers
       run: docker ps -a
 
+    - name: Create positions file
+      run: |
+        touch /tmp/positions.yaml
+        chmod 666 /tmp/positions.yaml
+        echo "Created positions file at /tmp/positions.yaml"
+
     - name: Create test log file
       run: |
         echo "Test log entry with Label browser" >> /tmp/webapp.log
