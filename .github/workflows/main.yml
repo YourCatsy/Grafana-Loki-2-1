@@ -17,7 +17,7 @@ jobs:
     - name: Build and start containers for a services
       run: docker compose up -d
     - name: Wait for services to start
-      run: sleep 15
+      run: sleep 300
     - name: Test containers functionality
       uses: cypress-io/github-action@v6
       env:
