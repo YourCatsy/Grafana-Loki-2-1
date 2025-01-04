@@ -3,7 +3,7 @@ server:
   grpc_listen_port: 0
 
 positions:
-  filename: /tmp/positions.yaml
+  filename: /etc/promtail/config.yaml
 
 clients:
   - url: http://loki:3100/loki/api/v1/push
@@ -16,4 +16,4 @@ scrape_configs:
         labels:
           job: webapp
           webapp: varlogs
-          __path__: /tmp/webapp.log
+          __path__: /var/log
