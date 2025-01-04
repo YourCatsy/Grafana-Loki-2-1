@@ -46,7 +46,7 @@ jobs:
     - name: Check Promtail configuration
       run: |
         ls -la ./promtail-config.yaml || echo "promtail-config.yaml not found"
-        cat ./promtail-config.yaml || echo "promtail-config.yaml not found"
+        cat ./promtail-config.yaml || echo "promtail-config.yaml empty"
 
     - name: Query Loki for logs
       run: |
@@ -54,31 +54,13 @@ jobs:
           --data-urlencode 'query={job="webapp"}' || echo "Loki query failed"
 
     - name: Check logs from Loki
-      run: |
-        CONTAINER_ID=$(docker ps -qf "name=loki")
-        if [ -n "$CONTAINER_ID" ]; then
-          docker logs $CONTAINER_ID
-        else
-          echo "No Loki container found"
-        fi
+      run: docker logs grafana-loki-2-1-loki-1 || echo "No logs from Loki"
 
     - name: Check logs from Promtail
-      run: |
-        CONTAINER_ID=$(docker ps -qf "name=promtail")
-        if [ -n "$CONTAINER_ID" ]; then
-          docker logs $CONTAINER_ID
-        else
-          echo "No Promtail container found"
-        fi
+      run: docker logs grafana-loki-2-1-promtail-1 || echo "No logs from Promtail"
 
     - name: Check logs from Grafana
-      run: |
-        CONTAINER_ID=$(docker ps -qf "name=grafana")
-        if [ -n "$CONTAINER_ID" ]; then
-          docker logs $CONTAINER_ID
-        else
-          echo "No Grafana container found"
-        fi
+      run: docker logs grafana-loki-2-1-grafana-1 || echo "No logs from Grafana"
 
     - name: Test containers functionality
       uses: cypress-io/github-action@v6
