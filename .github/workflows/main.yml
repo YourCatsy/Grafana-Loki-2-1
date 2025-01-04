@@ -54,14 +54,31 @@ jobs:
           --data-urlencode 'query={job="webapp"}' || echo "Loki query failed"
 
     - name: Check logs from Loki
-      run: docker logs $(docker ps -qf "name=loki") || echo "No logs from Loki"
+      run: |
+        CONTAINER_ID=$(docker ps -qf "name=loki")
+        if [ -n "$CONTAINER_ID" ]; then
+          docker logs $CONTAINER_ID
+        else
+          echo "No Loki container found"
+        fi
 
     - name: Check logs from Promtail
-      run: docker logs $(docker ps -qf "name=promtail") || echo "No logs from Promtail"
+      run: |
+        CONTAINER_ID=$(docker ps -qf "name=promtail")
+        if [ -n "$CONTAINER_ID" ]; then
+          docker logs $CONTAINER_ID
+        else
+          echo "No Promtail container found"
+        fi
 
     - name: Check logs from Grafana
-      run: docker logs $(docker ps -qf "name=grafana") || echo "No logs from Grafana"
-
+      run: |
+        CONTAINER_ID=$(docker ps -qf "name=grafana")
+        if [ -n "$CONTAINER_ID" ]; then
+          docker logs $CONTAINER_ID
+        else
+          echo "No Grafana container found"
+        fi
 
     - name: Test containers functionality
       uses: cypress-io/github-action@v6
